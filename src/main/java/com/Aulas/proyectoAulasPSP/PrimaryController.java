@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
 import com.Aulas.proyectoAulasPSP.model.Aula;
-import com.Aulas.proyectoAulasPSP.model.semaforo;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,15 +22,16 @@ public class PrimaryController {
 	private ListView<String> Alumnos;
 	@FXML
 	private ListView<String> Aulas;
-	
+	private int AULAS = 20;
 	
 	private Aula ControlaAulas;
-	private static final int AULAS = 5;
 	
 	//hilos creados
 	Thread alum;
 	Thread alumvar;
 	Thread aulas;
+	
+	
 
 	@FXML
 	public void Inicio() throws InterruptedException {
@@ -76,38 +76,29 @@ public class PrimaryController {
 		aulas.start();
 
 	}
-
+	
 	private void AnadeAlumnos() {
-		Semaphore misemafoto = new Semaphore(2);
 		try {
-			misemafoto.acquire();
-			Aula au = new Aula();
-			Thread[] hilos = new Thread[AULAS];
-
-			for (int i = 0; i < AULAS; i++) {
-				Thread th = new Thread(new semaforo(i, 5 , au));
-				th.setName("pepito ");
+			for (int i = 0; i <  AULAS; i++) {
+				Thread th = new Thread();
 				th.start();
-				hilos[i] = th;
-				System.out.println(th);
-
+				
 				if (i == AULAS - 1) {
 					try {
 						th.join();
-						
+						ControlaAulas.muestraTexto(Alumnos, "Alumnos totales: " + AULAS);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			}
-			Alumnos.getItems().add("Alumnos Totales:" + au.getAlumno());
-			misemafoto.release();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+
 
 	/**
 	 * Funcion dentro de primary.fxml que inicia el programa
@@ -152,6 +143,5 @@ public class PrimaryController {
 
 		Thread.currentThread().sleep(1000);
 		AnadeAlumnos();
-
 	}
 }
